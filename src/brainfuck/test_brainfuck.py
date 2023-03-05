@@ -1,6 +1,6 @@
 import unittest
 
-from src.brainfuck import Brainfuck
+from brainfuck import Brainfuck
 
 
 class TestBrainfuck(unittest.TestCase):
