@@ -1,3 +1,6 @@
+from syntax_dictionary import BrainfuckSyntax
+
+
 class Brainfuck:
     def __init__(self, tape_size=30_000):
         self.__arr = [0] * tape_size
@@ -47,35 +50,35 @@ class Brainfuck:
 
     def __handle_token(self, token):
         match token:
-            case '+':
+            case BrainfuckSyntax.INCREMENT_CELL.value:
                 if self.__get_current_value() != 255:
                     self.__set_current_value(self.__get_current_value() + 1)
                 else:
                     self.__set_current_value(0)
-            case '-':
+            case BrainfuckSyntax.DECREMENT_CELL.value:
                 if self.__get_current_value() != 0:
                     self.__set_current_value(self.__get_current_value() - 1)
                 else:
                     self.__set_current_value(255)
-            case '>':
+            case BrainfuckSyntax.INCREMENT_TAPE_POINTER.value:
                 if self.__pointer == len(self.__arr) - 1:
                     self.__pointer = 0
                 else:
                     self.__pointer += 1
-            case '<':
+            case BrainfuckSyntax.DECREMENT_TAPE_POINTER.value:
                 if self.__pointer == 0:
                     self.__pointer = len(self.__arr) - 1
                 else:
                     self.__pointer -= 1
-            case '.':
+            case BrainfuckSyntax.OUTPUT.value:
                 self._eval_output()
-            case ',':
+            case BrainfuckSyntax.INPUT.value:
                 self.__set_current_value(ord(input()[0]))
-            case '[':
+            case BrainfuckSyntax.START_LOOP.value:
                 if self.__get_current_value() != 0:
                     return
                 self.__command_pointer = self.__jump_locations[self.__command_pointer]
-            case ']':
+            case BrainfuckSyntax.END_LOOP.value:
                 if self.__get_current_value() == 0:
                     return
                 self.__command_pointer = self.__jump_locations[self.__command_pointer]
