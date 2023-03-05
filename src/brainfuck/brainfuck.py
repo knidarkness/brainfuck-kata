@@ -3,24 +3,30 @@ from syntax_dictionary import BrainfuckSyntax
 
 class Brainfuck:
     def __init__(self, tape_size=30_000):
-        self.__arr = [0] * tape_size
-        self.__pointer = 0
+        self.__output = None
+        self.__program = None
+        self.__jump_locations = None
+        self.__command_pointer = None
+        self.__tape_pointer = None
+        self.__arr = None
+        self.__tape_size = tape_size
+        self.init_with_program()
+
+    def init_with_program(self, program: str | None = None):
+        self.__arr = [0] * self.__tape_size
+        self.__tape_pointer = 0
         self.__command_pointer = 0
-        self.__program = ''
         self.__jump_locations = {}
         self.__output = ''
+        self.__program = program or ''
+        if self.__program is not None:
+            self._parse_program()
 
     def get_tape(self):
         return self.__arr
 
     def get_pointer(self):
-        return self.__pointer
-
-    def set_program(self, program: str):
-        self.__command_pointer = -1
-        self.__program = program
-        self.__jump_locations = {}
-        self._parse_program()
+        return self.__tape_pointer
 
     def eval_program(self, program: str | None):
         self.__command_pointer = -1
@@ -32,10 +38,10 @@ class Brainfuck:
             self.__handle_token(program[self.__command_pointer])
             if self.__command_pointer == len(self.__program) - 1:
                 break
-        return self.__pointer, self.__arr
+        return self.__tape_pointer, self.__arr
 
     def _eval_output(self):
-        symbol = chr(self.__arr[self.__pointer])
+        symbol = chr(self.__arr[self.__tape_pointer])
         self.__output += symbol
         return symbol
 
@@ -43,10 +49,10 @@ class Brainfuck:
         return self.__output
 
     def __get_current_value(self):
-        return self.__arr[self.__pointer]
+        return self.__arr[self.__tape_pointer]
 
     def __set_current_value(self, val):
-        self.__arr[self.__pointer] = val
+        self.__arr[self.__tape_pointer] = val
 
     def __handle_token(self, token):
         match token:
@@ -61,15 +67,15 @@ class Brainfuck:
                 else:
                     self.__set_current_value(255)
             case BrainfuckSyntax.INCREMENT_TAPE_POINTER.value:
-                if self.__pointer == len(self.__arr) - 1:
-                    self.__pointer = 0
+                if self.__tape_pointer == len(self.__arr) - 1:
+                    self.__tape_pointer = 0
                 else:
-                    self.__pointer += 1
+                    self.__tape_pointer += 1
             case BrainfuckSyntax.DECREMENT_TAPE_POINTER.value:
-                if self.__pointer == 0:
-                    self.__pointer = len(self.__arr) - 1
+                if self.__tape_pointer == 0:
+                    self.__tape_pointer = len(self.__arr) - 1
                 else:
-                    self.__pointer -= 1
+                    self.__tape_pointer -= 1
             case BrainfuckSyntax.OUTPUT.value:
                 self._eval_output()
             case BrainfuckSyntax.INPUT.value:

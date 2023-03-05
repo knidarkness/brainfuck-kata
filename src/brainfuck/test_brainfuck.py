@@ -45,7 +45,7 @@ class TestBrainfuck(unittest.TestCase):
 
     def test_detect_matching_loops(self):
         brainfuck = Brainfuck()
-        brainfuck.set_program('++++[--++[+++++]]++')
+        brainfuck.init_with_program('++++[--++[+++++]]++')
         parser_output = brainfuck._parse_program()
         self.assertEqual(parser_output, {
             4: 16,
@@ -57,7 +57,7 @@ class TestBrainfuck(unittest.TestCase):
     def test_detect_matching_loops_throws_error_on_wrong_loop_syntax(self):
         brainfuck = Brainfuck()
         with self.assertRaises(SyntaxError):
-            brainfuck.set_program('++++[--++[+++++]]++]')
+            brainfuck.init_with_program('++++[--++[+++++]]++]')
 
     def test_jump_if_zero(self):
         brainfuck = Brainfuck(5)
